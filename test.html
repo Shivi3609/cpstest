@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clicks Per Second Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 50px;
+      background-color: #000000;
+    }
+    h1 {
+      color: #5e5cf3be;
+    }
+    #click-area {
+      width: 300px;
+      height: 200px;
+      background-color: #997ff7;
+      color: rgba(0, 0, 0, 0.973);
+      font-size: 24px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px auto;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+    #timer, #live-cps, #result {
+      font-size: 24px;
+      margin-top: 10px;
+      color: #a98ad1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Clicks Per Second (CPS) Test</h1>
+  <p>Click the box as fast as you can in 5 seconds!</p>
+  <div id="click-area">Click Me!</div>
+  <div id="timer">Time left: 5s</div>
+  <div id="live-cps">Live CPS: 0</div>
+  <div id="result"></div>
+
+  <script>
+    let clicks = 0;
+    let startTime;
+    let started = false;
+    let countdown = 5;
+    let timerInterval;
+
+    const clickArea = document.getElementById('click-area');
+    const result = document.getElementById('result');
+    const timerDisplay = document.getElementById('timer');
+    const liveCpsDisplay = document.getElementById('live-cps');
+
+    function updateLiveCPS() {
+      const elapsed = (Date.now() - startTime) / 1000;
+      const cps = (clicks / elapsed).toFixed(2);
+      liveCpsDisplay.textContent = `Live CPS: ${cps}`;
+    }
+
+    clickArea.addEventListener('click', () => {
+      if (!started) {
+        started = true;
+        clicks = 1;
+        startTime = Date.now();
+        countdown = 5;
+        result.textContent = '';
+        clickArea.textContent = 'Keep Clicking!';
+        timerDisplay.textContent = `Time left: ${countdown}s`;
+        liveCpsDisplay.textContent = 'Live CPS: 0';
+
+        timerInterval = setInterval(() => {
+          countdown--;
+          updateLiveCPS();
+          if (countdown > 0) {
+            timerDisplay.textContent = `Time left: ${countdown}s`;
+          } else {
+            clearInterval(timerInterval);
+            const totalTime = (Date.now() - startTime) / 1000;
+            const finalCps = (clicks / totalTime).toFixed(2);
+            result.textContent = `Your Final CPS: ${finalCps}`;
+            timerDisplay.textContent = 'Time left: 0s';
+            clickArea.textContent = 'Click Me!';
+            started = false;
+          }
+        }, 1000);
+      } else {
+        clicks++;
+        updateLiveCPS();
+      }
+    });
+  </script>
+</body>
+</html>
